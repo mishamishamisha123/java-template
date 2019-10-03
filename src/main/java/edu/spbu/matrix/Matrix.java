@@ -5,6 +5,8 @@ package edu.spbu.matrix;
  */
 public interface Matrix
 {
+
+
   /**
    * однопоточное умнджение матриц
    * должно поддерживаться для всех 4-х вариантов
