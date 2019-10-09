@@ -52,9 +52,9 @@ public class DenseMatrix implements Matrix {
     if (o instanceof DenseMatrix && matrixA[0].length == o.length)
 
   {
-    double newArray = new double[o[0].length][];
-    double outArray = new double[matrixA.length][o[0].length];
-    double outArray1 = new double[o[0].length][matrixA.length];
+    double[][] newArray = new double[o[0].length][];
+    double[][] outArray = new double[matrixA.length][o[0].length];
+    double[][] outArray1 = new double[o[0].length][matrixA.length];
 
     for (int i = 0; i < o.length; ++i){
       for (int j = 0; j < o[0].length; ++j){
