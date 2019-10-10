@@ -43,4 +43,22 @@ public class SparseMatrix implements Matrix
   @Override public boolean equals(Object o) {
     return false;
   }
+  @Override
+
+  public int getHeight() {
+
+    return 0;
+
+  }
+
+
+
+  @Override
+
+  public int getWidth() {
+
+    return 0;
+
+  }
 }
+

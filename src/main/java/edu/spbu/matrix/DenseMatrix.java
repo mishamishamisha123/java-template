@@ -15,6 +15,13 @@ public class DenseMatrix implements Matrix {
   int width;
   int height;
 
+  private DenseMatrix(int width, int height, double[][] matrixA){
+    this.height = height;
+    this.width = width;
+    this.matrixA = matrixA;
+  }
+
+
   /**
    * загружает матрицу из файла
    *
@@ -49,16 +56,17 @@ public class DenseMatrix implements Matrix {
    */
   @Override
   public Matrix mul(Matrix o){
-    if (o instanceof DenseMatrix && matrixA[0].length == o.length)
+    if (o instanceof DenseMatrix && matrixA[0].length == o.getHeight())
 
   {
-    double[][] newArray = new double[o[0].length][];
-    double[][] outArray = new double[matrixA.length][o[0].length];
-    double[][] outArray1 = new double[o[0].length][matrixA.length];
+    DenseMatrix dm = (DenseMatrix) o;
+    double[][] newArray = new double[dm.matrixA[0].length][dm.matrixA.length];
+    double[][] outArray = new double[matrixA.length][dm.matrixA[0].length];
+    double[][] outArray1 = new double[dm.matrixA[0].length][matrixA.length];
 
-    for (int i = 0; i < o.length; ++i){
-      for (int j = 0; j < o[0].length; ++j){
-        newArray[j][i] = o[i][j];
+    for (int i = 0; i < dm.matrixA.length; ++i){
+      for (int j = 0; j < dm.matrixA[0].length; ++j){
+        newArray[j][i] = dm.matrixA[i][j];
         outArray[i][j] = 0;
       }
     }
@@ -66,18 +74,18 @@ public class DenseMatrix implements Matrix {
     for (int i = 0; i < newArray.length ; ++i){
       for (int j = 0; j < matrixA.length ; ++j){
         for (int k = 0; k < matrixA[0].length ; ++k) {
-          outArray[i][j] += matrixA[j][k] * o[i][k]
+          outArray[i][j] += matrixA[j][k] * dm.matrixA[i][k];
         }
       }
     }
 
-    for (int i = 0; i < o.length; ++i){
-      for (int j = 0; j < o[0].length; ++j){
+    for (int i = 0; i < dm.matrixA.length; ++i){
+      for (int j = 0; j < dm.matrixA[0].length; ++j){
         outArray[j][i] = outArray1[i][j];
       }
     }
-
-    return outArray;
+    DenseMatrix out = new DenseMatrix(matrixA.length,dm.matrixA[0].length, outArray);
+    return out;
   }
     return null;
 }
@@ -103,17 +111,34 @@ public class DenseMatrix implements Matrix {
     }
 
     if (o instanceof DenseMatrix) {
-      if (matrixA.length != o.length || matrixA[0].length != o[0].length) {
+      if (matrixA.length != ((DenseMatrix) o).getHeight() || matrixA[0].length != ((DenseMatrix) o).getWidth()) {
         return false;
       }
-
+      DenseMatrix dm = (DenseMatrix) o;
       for (int i = 0; i < matrixA.length ; ++i) {
-        if (matrixA[i] != o[i]) {
+        if (matrixA[i] != dm.matrixA[i]) {
           return false;
         }
       }
       return true;
     }
     return false;
+  }
+  @Override
+
+  public int getHeight() {
+
+    return this.height;
+
+  }
+
+
+
+  @Override
+
+  public int getWidth() {
+
+    return this.width;
+
   }
 }

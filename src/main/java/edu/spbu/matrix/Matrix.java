@@ -22,4 +22,27 @@ public interface Matrix
    */
   Matrix dmul(Matrix o);
 
+
+
+  /**
+
+   * Returns height of a matrix
+
+   * @return height
+
+   */
+
+  int getHeight();
+
+
+
+  /**
+
+   * Returns width of a matrix
+
+   * @return width
+
+   */
+
+  int getWidth();
 }
