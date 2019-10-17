@@ -16,4 +16,5 @@ public class MatrixTest
     Matrix expected = new DenseMatrix("result.txt");
     assertEquals(expected, m1.mul(m2));
   }
+
 }

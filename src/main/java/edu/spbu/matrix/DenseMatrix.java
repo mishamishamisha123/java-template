@@ -6,16 +6,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Плотная матрица
  */
 public class DenseMatrix implements Matrix {
-  double[][] matrixA;
-  int width;
-  int height;
+  private double[][] matrixA;
+  private int width;
+  private int height;
 
-  private DenseMatrix(int width, int height, double[][] matrixA){
+  private DenseMatrix(int width, int height, double[][] matrixA) {
     this.height = height;
     this.width = width;
     this.matrixA = matrixA;
@@ -55,16 +56,30 @@ public class DenseMatrix implements Matrix {
    * @return
    */
   @Override
-  public Matrix mul(Matrix o){
+  public Matrix mul(Matrix o) {
     if (o instanceof DenseMatrix && matrixA[0].length == o.getHeight())
 
-  {
-    DenseMatrix dm = (DenseMatrix) o;
-    double[][] newArray = new double[dm.matrixA[0].length][dm.matrixA.length];
-    double[][] outArray = new double[matrixA.length][dm.matrixA[0].length];
-    double[][] outArray1 = new double[dm.matrixA[0].length][matrixA.length];
+    {
+      DenseMatrix dm = (DenseMatrix) o;
+      //double[][] newArray = new double[dm.matrixA[0].length][dm.matrixA.length];
+      double[][] outArray = new double[matrixA.length][dm.matrixA[0].length];
+      //double[][] outArray1 = new double[dm.matrixA[0].length][matrixA.length];
 
-    for (int i = 0; i < dm.matrixA.length; ++i){
+      for (int i = 0; i < matrixA.length; ++i) {
+        for (int j = 0; j < dm.matrixA[0].length; ++j) {
+          outArray[i][j] = 0;
+        }
+      }
+
+      for (int i = 0; i < matrixA.length; ++i) {
+        for (int j = 0; j < dm.matrixA[0].length; ++j) {
+          for (int k = 0; k < matrixA[0].length; ++k) {
+            outArray[i][j] += matrixA[i][k] * dm.matrixA[k][j];
+          }
+        }
+      }
+
+    /*for (int i = 0; i < dm.matrixA.length; ++i){
       for (int j = 0; j < dm.matrixA[0].length; ++j){
         newArray[j][i] = dm.matrixA[i][j];
         outArray[i][j] = 0;
@@ -74,7 +89,7 @@ public class DenseMatrix implements Matrix {
     for (int i = 0; i < newArray.length ; ++i){
       for (int j = 0; j < matrixA.length ; ++j){
         for (int k = 0; k < matrixA[0].length ; ++k) {
-          outArray[i][j] += matrixA[j][k] * dm.matrixA[i][k];
+          outArray1[i][j] += matrixA[i][k] * dm.matrixA[j][k];
         }
       }
     }
@@ -83,46 +98,21 @@ public class DenseMatrix implements Matrix {
       for (int j = 0; j < dm.matrixA[0].length; ++j){
         outArray[j][i] = outArray1[i][j];
       }
+    }*/
+      return new DenseMatrix(matrixA.length, dm.matrixA[0].length, outArray);
     }
-    DenseMatrix out = new DenseMatrix(matrixA.length,dm.matrixA[0].length, outArray);
-    return out;
-  }
     return null;
-}
+  }
+
   /**
    * многопоточное умножение матриц
    *
    * @param o
    * @return
    */
-  @Override public Matrix dmul(Matrix o)
-  {
+  @Override
+  public Matrix dmul(Matrix o) {
     return null;
-  }
-
-  /**
-   * спавнивает с обоими вариантами
-   * @param o
-   * @return
-   */
-  @Override public boolean equals(Object o) {
-    if (o == matrixA) {
-      return true;
-    }
-
-    if (o instanceof DenseMatrix) {
-      if (matrixA.length != ((DenseMatrix) o).getHeight() || matrixA[0].length != ((DenseMatrix) o).getWidth()) {
-        return false;
-      }
-      DenseMatrix dm = (DenseMatrix) o;
-      for (int i = 0; i < matrixA.length ; ++i) {
-        if (matrixA[i] != dm.matrixA[i]) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return false;
   }
   @Override
 
@@ -133,7 +123,6 @@ public class DenseMatrix implements Matrix {
   }
 
 
-
   @Override
 
   public int getWidth() {
@@ -141,4 +130,50 @@ public class DenseMatrix implements Matrix {
     return this.width;
 
   }
+
+
+  @Override
+
+  public int hashCode() {
+
+    int result = Objects.hash(width, height);
+
+    result = 31 * result + Arrays.deepHashCode(matrixA);
+
+    return result;
+
+  }
+
+  /**
+   * спавнивает с обоими вариантами
+   *
+   * @param o
+   * @return
+   */
+  @Override
+  public boolean equals(Object o) {
+    /*if (o == matrixA) {
+      return true;
+    }*/
+
+    if (o instanceof DenseMatrix) {
+      DenseMatrix dm = (DenseMatrix) o;
+      if ((matrixA.length != dm.matrixA.length) || (matrixA[0].length != dm.matrixA[0].length)) {
+        return false;
+      }
+      if (dm.matrixA == matrixA) return true;
+      if (this.hashCode() == dm.hashCode())
+        for (int i = 0; i < matrixA.length; ++i) {
+          for (int j = 0; j < matrixA[0].length; ++j) {
+            if (matrixA[i][j] != dm.matrixA[i][j]) {
+              return false;
+            }
+          }
+        }
+        return true;
+
+    }
+    return false;
+  }
+
 }
