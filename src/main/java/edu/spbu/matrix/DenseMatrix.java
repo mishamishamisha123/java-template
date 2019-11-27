@@ -79,26 +79,6 @@ public class DenseMatrix implements Matrix {
         }
       }
 
-    /*for (int i = 0; i < dm.matrixA.length; ++i){
-      for (int j = 0; j < dm.matrixA[0].length; ++j){
-        newArray[j][i] = dm.matrixA[i][j];
-        outArray[i][j] = 0;
-      }
-    }
-
-    for (int i = 0; i < newArray.length ; ++i){
-      for (int j = 0; j < matrixA.length ; ++j){
-        for (int k = 0; k < matrixA[0].length ; ++k) {
-          outArray1[i][j] += matrixA[i][k] * dm.matrixA[j][k];
-        }
-      }
-    }
-
-    for (int i = 0; i < dm.matrixA.length; ++i){
-      for (int j = 0; j < dm.matrixA[0].length; ++j){
-        outArray[j][i] = outArray1[i][j];
-      }
-    }*/
       return new DenseMatrix(matrixA.length, dm.matrixA[0].length, outArray);
     }
     return null;

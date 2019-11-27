@@ -36,6 +36,7 @@ public interface Matrix
 
 
 
+  Matrix transp();
   /**
 
    * Returns width of a matrix
