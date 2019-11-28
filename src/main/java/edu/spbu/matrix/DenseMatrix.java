@@ -1,5 +1,6 @@
 package edu.spbu.matrix;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -12,9 +13,9 @@ import java.util.Objects;
  * Плотная матрица
  */
 public class DenseMatrix implements Matrix {
-  private double[][] matrixA;
-  private int width;
-  private int height;
+  public double[][] matrixA;
+  public int width;
+  public int height;
 
   private DenseMatrix(int width, int height, double[][] matrixA) {
     this.height = height;
@@ -61,9 +62,7 @@ public class DenseMatrix implements Matrix {
 
     {
       DenseMatrix dm = (DenseMatrix) o;
-      //double[][] newArray = new double[dm.matrixA[0].length][dm.matrixA.length];
       double[][] outArray = new double[matrixA.length][dm.matrixA[0].length];
-      //double[][] outArray1 = new double[dm.matrixA[0].length][matrixA.length];
 
       for (int i = 0; i < matrixA.length; ++i) {
         for (int j = 0; j < dm.matrixA[0].length; ++j) {
@@ -81,6 +80,57 @@ public class DenseMatrix implements Matrix {
 
       return new DenseMatrix(matrixA.length, dm.matrixA[0].length, outArray);
     }
+
+    if(o instanceof SparseMatrix){
+
+
+
+      if(this.width!=((SparseMatrix)o).rows){
+
+        throw new RuntimeException("Введена неправильных размеров матрица");
+
+      }
+
+      SparseMatrix result = new SparseMatrix(this.height, ((SparseMatrix)o).columns);
+
+      SparseMatrix o1 = ((SparseMatrix)o).transp();
+
+
+
+      for( Point key: o1.val.keySet()) {
+
+        for (int i = 0; i < this.height; i++) {
+
+          if(matrixA[i][key.y]!=0){
+
+            Point p = new Point(i,key.x);
+
+            if (result.val.containsKey(p)){
+
+              double t = result.val.get(p) + matrixA[i][key.y]*o1.val.get(key);
+
+              result.val.put(p,t);
+
+            }
+
+            else {
+
+              double t = matrixA[i][key.y] * o1.val.get(key);
+
+              result.val.put(p, t);
+
+            }
+
+          }
+
+        }
+
+      }
+
+      return (result);
+
+    }
+
     return null;
   }
 
@@ -94,20 +144,12 @@ public class DenseMatrix implements Matrix {
   public Matrix dmul(Matrix o) {
     return null;
   }
+
   @Override
 
   public int getHeight() {
 
     return this.height;
-
-  }
-
-
-  @Override
-
-  public int getWidth() {
-
-    return this.width;
 
   }
 
@@ -132,9 +174,6 @@ public class DenseMatrix implements Matrix {
    */
   @Override
   public boolean equals(Object o) {
-    /*if (o == matrixA) {
-      return true;
-    }*/
 
     if (o instanceof DenseMatrix) {
       DenseMatrix dm = (DenseMatrix) o;
@@ -154,6 +193,13 @@ public class DenseMatrix implements Matrix {
 
     }
     return false;
+  }
+
+  @Override
+  public DenseMatrix transp() {
+    DenseMatrix res = new DenseMatrix(width, height, matrixA);
+
+    return res;
   }
 
 }

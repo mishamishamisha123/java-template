@@ -11,7 +11,7 @@ import java.util.Objects;
  * Разреженная матрица
  */
 public class SparseMatrix implements Matrix {
-  private Point key;
+  public Point key;
   int rows, columns;
   Map<Point, Double> val;
 
@@ -110,22 +110,22 @@ public class SparseMatrix implements Matrix {
 
     if (o instanceof DenseMatrix) {
 
-      if(this.columns!=((DenseMatrix)o).rows){
+      if(this.columns!=((DenseMatrix)o).height){
         throw new RuntimeException("Введена неправильных размеров матрица");
       }
 
-      SparseMatrix result = new SparseMatrix(this.rows, ((DenseMatrix)o).columns);
+      SparseMatrix result = new SparseMatrix(this.rows, ((DenseMatrix)o).width);
       DenseMatrix dM = (DenseMatrix) o.transp();
 
       for (Point key : val.keySet()) {
-        for (int i = 0; i < dM.rows; i++) {
-          if (dM.deMatrix[i][key.y] != 0) {
+        for (int i = 0; i < dM.height; i++) {
+          if (dM.matrixA[i][key.y] != 0) {
             Point p = new Point(key.x, i);
             if (result.val.containsKey(p)) {
-              double t = result.val.get(p) + val.get(key) * dM.deMatrix[i][key.y];
+              double t = result.val.get(p) + val.get(key) * dM.matrixA[i][key.y];
               result.val.put(p, t);
             } else {
-              double t = val.get(key) * dM.deMatrix[i][key.y];
+              double t = val.get(key) * dM.matrixA[i][key.y];
               result.val.put(p, t);
             }
           }
@@ -133,6 +133,7 @@ public class SparseMatrix implements Matrix {
       }
       return result;
     }
+
 
     return null;
   }
@@ -193,19 +194,19 @@ public class SparseMatrix implements Matrix {
     if(o instanceof DenseMatrix){
       DenseMatrix dM = (DenseMatrix) o;
 
-      if (rows != dM.rows || columns != dM.columns)
+      if (rows != dM.height || columns != dM.width)
         return false;
 
       int count=0;
-      for(int i=0;i<dM.rows;i++)
-        for(int j=0;j<dM.columns;j++)
-          if(dM.deMatrix[i][j]!=0)
+      for(int i=0;i<dM.height;i++)
+        for(int j=0;j<dM.width;j++)
+          if(dM.matrixA[i][j]!=0)
             count++;
       if(count==val.size()){
         for(Point key: val.keySet()){
-          if(dM.deMatrix[key.x][key.y]==0)
+          if(dM.matrixA[key.x][key.y]==0)
             return false;
-          if(dM.deMatrix[key.x][key.y]!=val.get(key))
+          if(dM.matrixA[key.x][key.y]!=val.get(key))
             return false;
         }
         return true;
@@ -245,18 +246,13 @@ public class SparseMatrix implements Matrix {
     }
     return (str.toString());
   }
-  /*
-  public static void main(String[] args) {
-    Matrix m1 = new SparseMatrix("M1.txt");
-    Matrix m2 = new DenseMatrix("M2.txt");
-    //System.out.println(m1.mul(m2));
-    try (FileWriter writer = new FileWriter("wrResult.txt")) {
-      Matrix m3 = m1.mul(m2);
-      m3.toString();
-      writer.write(m3.toString());
-    } catch (IOException e) {
-      System.out.println(e.getMessage());
-    }
-  }*/
+
+  @Override
+
+  public int getHeight() {
+
+    return this.rows;
+
+  }
 
 }
