@@ -85,7 +85,7 @@ public class SparseMatrix implements Matrix {
     if (o instanceof SparseMatrix) {
 
       if (this.columns != ((SparseMatrix)o).rows) {
-        throw new RuntimeException("Введена неправильных размеров матрица");
+        throw new RuntimeException("Введена матрица неправильных размеров");
       }
       SparseMatrix result = new SparseMatrix(this.rows, ((SparseMatrix)o).columns);
       SparseMatrix sM = ((SparseMatrix) o).transp();
@@ -111,7 +111,7 @@ public class SparseMatrix implements Matrix {
     if (o instanceof DenseMatrix) {
 
       if(this.columns!=((DenseMatrix)o).height){
-        throw new RuntimeException("Введена неправильных размеров матрица");
+        throw new RuntimeException("Введена матрица неправильных размеров");
       }
 
       SparseMatrix result = new SparseMatrix(this.rows, ((DenseMatrix)o).width);
@@ -133,6 +133,29 @@ public class SparseMatrix implements Matrix {
       }
       return result;
     }
+
+    /*if (o instanceof DenseMatrix) {
+
+      if(this.columns!=((DenseMatrix)o).height){
+        throw new RuntimeException("Введена матрица неправильных размеров");
+      }
+
+      SparseMatrix result = new SparseMatrix(this.rows, ((DenseMatrix)o).width);
+      DenseMatrix dM = (DenseMatrix) o;
+      SparseMatrix one = this.transp();
+
+      for (int i = 0; i < dM.width; i++) {
+        for (Point key : one.val.keySet()){
+          if (dM.matrixA[key.y][i] != 0) {
+            Point p = new Point(i, key.y);
+              double t = result.val.get(p) + val.get(key) * dM.matrixA[i][key.y];
+              result.val.put(p, t);
+            }
+          }
+        }
+
+      return result.transp();
+    }*/
 
 
     return null;
