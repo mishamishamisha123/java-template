@@ -14,16 +14,61 @@ import java.util.Objects;
 /**
  * Плотная матрица
  */
-/*public class DenseMatrix implements Matrix {
-    public double[][] matrixA;
-    public int width;
-    public int height;
+class DMuller implements Runnable{
 
-    private DenseMatrix(int width, int height, double[][] matrixA) {
-        this.height = height;
-        this.width = width;
-        this.matrixA = matrixA;
-    }*/
+
+
+    int rows,columns;
+
+    int end, start;
+
+    DenseMatrix right, left, res;
+
+
+
+    DMuller(int indexS, int indexEn,int columns, DenseMatrix right, DenseMatrix left, DenseMatrix res ){
+
+        this.end = indexEn;
+
+        this.start = indexS;
+
+        this.columns = columns;
+
+        this.right = right;
+
+        this.left = left;
+
+        this.res = res;
+
+        this.rows = indexEn-indexS;
+
+    }
+
+
+
+    @Override
+
+    public void run(){
+
+        for(int i=start;i<end;i++) {
+
+            for (int j = 0; j < res.width; j++) {
+
+                for (int k = 0; k < this.columns; k++) {
+
+                    res.matrixA[i][j] += left.matrixA[i][k] * right.matrixA[j][k];
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+}
 
     public class DenseMatrix implements Matrix
 
@@ -36,19 +81,17 @@ import java.util.Objects;
         int width;
 
 
-
         //конструктор dense матрицы
 
-        public DenseMatrix(int rows, int columns){
+        public DenseMatrix(int rows, int columns) {
 
             this.height = rows;
 
             this.width = columns;
 
-            matrixA = new double [rows] [columns];
+            matrixA = new double[rows][columns];
 
         }
-
 
     /**
      * загружает матрицу из файла
@@ -155,57 +198,80 @@ import java.util.Objects;
         return null;
     }
 
-    @Override
-    public Matrix dmul(Matrix o) {
-        return null;
-    }
-
     /**
      * многопоточное умножение матриц
      *
      * @param o
      * @return
      */
-    /*@Override public Matrix dmul(Matrix o) {
+
+    @Override public Matrix dmul(Matrix o) {
 
         if(o instanceof DenseMatrix){
 
+
             if(this.width!=((DenseMatrix)o).height){
+
                 throw new RuntimeException("Введена матрица неправильных размеров");
+
             }
 
-            DenseMatrix result = new DenseMatrix(this.height, ((DenseMatrix)o).width, matrixA);
+            DenseMatrix result = new DenseMatrix(this.height, ((DenseMatrix)o).width);
 
             DenseMatrix dM = ((DenseMatrix)o).transp();
+
 
             Thread[] threads = new Thread[4];
 
             int ost = height%4;
+
             int j=0;
+
             for(int i=0;i<4;i++){
+
                 j=height/4;
+
                 DMuller muller;
+
                 if(i==ost&&i!=0) {
-                    muller = new DMuller(i * j, j * (i + 1) + ost, columns, dM,this, result);
+
+                    muller = new DMuller(i * j, j * (i + 1) + ost, width, dM,this, result);
+
                 }
+
                 else {
-                    muller = new DMuller(i * j, j * (i + 1), columns, dM,this, result);
+
+                    muller = new DMuller(i * j, j * (i + 1), width, dM,this, result);
+
                 }
+
                 threads[i]= new Thread(muller);
+
                 threads[i].start();
+
             }
+
             for(int i=0;i<4;i++){
+
                 try {
+
                     threads[i].join();
+
                 } catch (InterruptedException e) {
+
                     e.printStackTrace();
+
                 }
+
             }
+
             return(result);
+
         }
+
         return null;
+
     }
-    */
 
     @Override
 

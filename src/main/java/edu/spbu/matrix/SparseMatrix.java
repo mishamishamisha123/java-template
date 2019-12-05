@@ -3,10 +3,61 @@ package edu.spbu.matrix;
 import java.awt.*;
 import java.io.*;
 import java.nio.channels.ScatteringByteChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+
+class SMuller implements Runnable{
+
+
+
+  int start, step;
+
+  SparseMatrix left, right, res;
+
+  SMuller( int start, int step, SparseMatrix left, SparseMatrix right, SparseMatrix res){
+
+    this.start = start;
+
+    this.step = step;
+
+    this.left = left;
+
+    this.right = right;
+
+    this.res = res;
+
+  }
+
+
+  @Override
+
+  public void run() {
+
+    for(Point key: left.val.keySet()){
+
+      for(int i=start;i<start+step;i++){
+
+        Point p1 = new Point(i,key.y);
+
+        if(right.val.containsKey(p1)){
+
+          Point p2 = new Point(key.x, i);
+
+          res.update(p2,key,p1, res, left, right);
+
+
+        }
+
+      }
+
+    }
+
+  }
+  
+}
 /**
  * Разреженная матрица
  */
@@ -22,6 +73,35 @@ public class SparseMatrix implements Matrix {
     val = new HashMap<>();
   }
 
+  synchronized public void update(Point p2, Point key, Point p1,SparseMatrix res, SparseMatrix left, SparseMatrix right ) {
+
+    if (res.val.containsKey(p2)) {
+
+      double t = res.get2(p2) + left.get2(key) * right.get2(p1);
+
+      res.Put(p2, t);
+
+    } else {
+
+      double t = left.get2(key) * right.get2(p1);
+
+      res.Put(p2, t);
+
+    }
+
+  }
+
+  synchronized public Double get2(Point a){
+
+    return (this.val.get(a));
+
+  }
+
+  synchronized public void Put(Point a, Double b){
+
+    this.val.put(a,b);
+
+  }
 
   /**
    * загружает матрицу из файла
@@ -134,30 +214,6 @@ public class SparseMatrix implements Matrix {
       return result;
     }
 
-    /*if (o instanceof DenseMatrix) {
-
-      if(this.columns!=((DenseMatrix)o).height){
-        throw new RuntimeException("Введена матрица неправильных размеров");
-      }
-
-      SparseMatrix result = new SparseMatrix(this.rows, ((DenseMatrix)o).width);
-      DenseMatrix dM = (DenseMatrix) o;
-      SparseMatrix one = this.transp();
-
-      for (int i = 0; i < dM.width; i++) {
-        for (Point key : one.val.keySet()){
-          if (dM.matrixA[key.y][i] != 0) {
-            Point p = new Point(i, key.y);
-              double t = result.val.get(p) + val.get(key) * dM.matrixA[i][key.y];
-              result.val.put(p, t);
-            }
-          }
-        }
-
-      return result.transp();
-    }*/
-
-
     return null;
   }
 
@@ -168,8 +224,58 @@ public class SparseMatrix implements Matrix {
    * @return
    */
   @Override
+
   public Matrix dmul(Matrix o) {
+
+    if(o instanceof SparseMatrix) {
+
+
+      if (this.columns != ((SparseMatrix) o).rows) {
+
+        throw new RuntimeException("Введена матрица неправильных размеров");
+
+      }
+
+      SparseMatrix result = new SparseMatrix(this.rows, ((SparseMatrix) o).columns);
+
+      SparseMatrix sM = ((SparseMatrix) o).transp();
+
+      int step = sM.rows / 4 + 1;
+
+      ArrayList<Thread> threads = new ArrayList<>();
+
+      for (int i = 0; i < sM.rows; i += step) {
+
+        SMuller smuller = new SMuller(i, step, this, sM, result);
+
+        Thread t = new Thread(smuller);
+
+        threads.add(t);
+
+        t.start();
+
+      }
+
+      for (Thread th : threads) {
+
+        try {
+
+          th.join();
+
+        } catch (InterruptedException e) {
+
+          e.printStackTrace();
+
+        }
+
+      }
+
+      return (result);
+
+    }
+
     return null;
+
   }
 
   @Override

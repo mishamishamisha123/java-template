@@ -41,4 +41,19 @@ public class MatrixTest
     assertEquals(expected, m1.mul(m2));
   }
 
+  @Test
+  public void dmulDD() {
+    Matrix m1 = new DenseMatrix("m1.txt");
+    Matrix m2 = new DenseMatrix("m2.txt");
+    Matrix expected = new DenseMatrix("result.txt");
+    assertEquals(expected, m1.dmul(m2));
+  }
+
+  @Test
+  public void dmulSS() {
+    Matrix m1 = new SparseMatrix("m1.txt");
+    Matrix m2 = new SparseMatrix("m2.txt");
+    Matrix expected = new SparseMatrix("result.txt");
+    assertEquals(expected, m1.dmul(m2));
+  }
 }
