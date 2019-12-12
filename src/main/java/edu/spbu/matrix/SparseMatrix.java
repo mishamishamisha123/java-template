@@ -56,7 +56,7 @@ class SMuller implements Runnable{
     }
 
   }
-  
+
 }
 /**
  * Разреженная матрица
