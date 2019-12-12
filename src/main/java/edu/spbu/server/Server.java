@@ -1,4 +1,4 @@
-package edu.spbu.client_server;
+package edu.spbu.server;
 
 
 
@@ -27,10 +27,6 @@ public class Server {
     public static void main(String[] args){
 
         try{
-
-
-
-            //Server server = new Server(5678);
 
             int port = 5678;
 
@@ -62,7 +58,7 @@ public class Server {
 
                 sendData(filePath); // отправляет ответ клиенту
 
-                //server.close();
+                server.close();
 
             }
 

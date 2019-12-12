@@ -1,4 +1,4 @@
-package edu.spbu.client_server;
+package edu.spbu.server;
 
 import java.io.*;
 
@@ -7,8 +7,6 @@ import java.net.*;
 
 
 public class Client implements Runnable {
-
-
 
     static private Socket connection;
 
@@ -36,29 +34,21 @@ public class Client implements Runnable {
 
     }
 
-
-
     //конструктор клиента
 
     public Client(String serverName, int port ) throws IOException {
 
         connection = new Socket(InetAddress.getByName(serverName),port);
 
-
-
         output = new DataOutputStream(connection.getOutputStream());
 
         System.out.println("DataOutputStream  created");
-
-
 
         input = new DataInputStream(connection.getInputStream());
 
         System.out.println("DataInputStream created");
 
     }
-
-
 
     @Override
 
@@ -69,9 +59,7 @@ public class Client implements Runnable {
 
     private void sendData(String serverName) throws IOException {
 
-
-
-        String s = "GET /test.html HTTP/1.1\r\nHost:" + serverName +"\r\n\r\n";//пофиксить сервенэйм
+        String s = "GET /server.html HTTP/1.1\r\nHost:" + serverName +"\r\n\r\n";
 
         output.write(s.getBytes());
 
@@ -80,8 +68,6 @@ public class Client implements Runnable {
         System.out.println("Запрос отправлен");
 
     }
-
-
 
     //получает ответ
 
