@@ -20,9 +20,9 @@ public class Client implements Runnable {
 
         try{
 
-            Client client = new Client("127.0.0.1", 8080);
+            Client client = new Client("www.239.ru", 80);
 
-            client.sendData("Server");
+            client.sendData("www.239.ru");
 
             client.receiveData();
 
@@ -38,7 +38,7 @@ public class Client implements Runnable {
 
     public Client(String serverName, int port ) throws IOException {
 
-        connection = new Socket(InetAddress.getByName(serverName),port);
+        connection = new Socket(serverName,port);
 
         output = new DataOutputStream(connection.getOutputStream());
 
@@ -56,10 +56,13 @@ public class Client implements Runnable {
 
     }
 
-
     private void sendData(String serverName) throws IOException {
 
-        String s = "GET /server.html HTTP/1.1\r\nHost:" + serverName +"\r\n\r\n";
+        String s = "GET / HTTP/1.1\r\n" +
+                "Host: " + serverName +"\r\n" +
+                "\r\n";
+
+        BufferedWriter outputstream = new BufferedWriter(new OutputStreamWriter(output));
 
         output.write(s.getBytes());
 

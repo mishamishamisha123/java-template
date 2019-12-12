@@ -4,13 +4,9 @@ package edu.spbu.server;
 
 import java.io.*;
 
-import java.net.InetAddress;
-
 import java.net.ServerSocket;
 
 import java.net.Socket;
-
-import java.nio.charset.Charset;
 
 import java.util.Arrays;
 
@@ -28,7 +24,7 @@ public class Server {
 
         try{
 
-            int port = 5678;
+            int port = 8080;
 
             ServerSocket server = new ServerSocket(port);
 
@@ -82,8 +78,6 @@ public class Server {
 
             try(FileReader fileRead = new FileReader(file)){
 
-
-
                 output.flush();
 
                 BufferedReader reader = new BufferedReader(fileRead);
@@ -94,10 +88,6 @@ public class Server {
 
                 i=reader.readLine();
 
-
-
-                //чтение из файла
-
                 while(i!=null){
 
                     text.append(i);
@@ -106,21 +96,17 @@ public class Server {
 
                 }
 
-
-
                 content = text.toString();
 
                 String message="HTTP/1.1 200 OK\r\n" +
 
-                        "Server: Kakoi-to server\r\n" +
+                        "Server: 127.0.0.1\r\n" +
 
                         "Content-Type: text/html\r\n" +
 
                         "Connection: close\r\n\r\n" +content;
 
                 output.write(message.getBytes());//отправляем ответ
-
-                //System.out.println("Ответ отправлен");
 
                 output.close();
 
@@ -138,13 +124,7 @@ public class Server {
 
         }
 
-
-
     }
-
-
-
-    //получает запрос
 
     private static String receiveData(){
 
@@ -154,15 +134,11 @@ public class Server {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-        //System.out.println("Запрос принят");
-
         try{
 
             String line;
 
             if((line=reader.readLine())!=null) {
-
-                //System.out.println(line);
 
                 String[] st = line.split(" ");
 
@@ -173,18 +149,6 @@ public class Server {
                     filePath = st[1].substring(1);
 
                     System.out.println("Запрос принят. Ищем файл: " + filePath);
-
-
-
-                    //печать запроса клиента
-
-                    /*String str;
-
-                    while((str=reader.readLine()).length()!=0)
-
-                        System.out.println(str);*/
-
-
 
                     return filePath;
 
